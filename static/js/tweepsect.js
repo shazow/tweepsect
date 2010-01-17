@@ -70,9 +70,9 @@ TweepSet.prototype.add_member = function(tweep, fade) {
     var pos = insert_index(this.members, tweep.screen_name, function(a, b) { return a.toLowerCase() < b.toLowerCase() })
     var row = $("<li></li>").html('<a href="http://twitter.com/'+ tweep.screen_name +'" target="_blank">'+ tweep.screen_name +'</a>');
 
-    var last_tweet = tweep['status'] && (new Date.parse(tweep['status']['created_at']));
+    var last_tweet = tweep['status'] && Date.parse(tweep['status']['created_at']);
 
-    if(true || last_tweet && now - last_tweet > 3*30*24*60*60*1000) { // 3 months
+    if(last_tweet && now - last_tweet > 3*30*24*60*60*1000) { // 3 months
         $("a", row).append(' <i class="twitter_sprite stale" title="Inactive for more than 3 months."></i>');
     }
 
