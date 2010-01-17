@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet" href="qunit.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="qunit.js"></script>
+
+    <script type="text/javascript" src="../static/js/tweepsect.js"></script>
+
+    <script>
+
+$(document).ready(function(){
+
+
+    test("in_array", function() {
+        var a = [1,2,3,4,5,6];
+
+        ok(in_array(a, 1));
+        ok(in_array(a, 3));
+        ok(in_array(a, 6));
+        ok(!in_array(a, 7));
+    });
+
+    test("find_index", function() {
+        var a = [1,2,3,5,6];
+
+        equals(insert_index(a, 4), 3);
+        equals(insert_index(a, 0), 0);
+        equals(insert_index(a, 7), 5);
+        equals(insert_index(a, 1), 0);
+    });
+
+    test("find_index strings", function() {
+        var a = ['a', 'b', 'c', 'e'];
+
+        equals(insert_index(a, 'd'), 3);
+        equals(insert_index(a, 'a'), 0);
+        equals(insert_index(a, 'f'), 4);
+
+        var b = ['apple', 'banana', 'coconut', 'elderberry'];
+
+        equals(insert_index(b, 'durian'), 3);
+        equals(insert_index(b, 'apricot'), 1);
+        equals(insert_index(b, 'fig'), 4);
+
+        var c = [];
+        var phrase = "I am a little teapot short and stout".split(' ');
+        $.each(phrase, function(i, word) {
+            c.splice(insert_index(c, word), 0, word);
+        });
+
+        same(phrase.sort(), c);
+
+
+    });
+
+    test("load_diffs", function() {
+        var following = [1,2,3,4,5,6,7,8];
+        var followers = [5,6,7,8,9,10,11,12];
+
+        var only_followers = new Array();
+        var only_following = new Array();
+        var mutual = new Array();
+
+        load_diffs(following, followers, only_followers, only_following, mutual);
+
+        same(mutual, [5,6,7,8], "mutual");
+        same(only_followers, [9,10,11,12], "only_followers");
+        same(only_following, [1,2,3,4], "only_following");
+    });
+
+    test("load_diffs realistic", function() {
+        var following = [10810102, 12308052, 13461, 13530292, 14058661, 14295341, 14372143, 1456971, 15347965, 15804774, 16302984, 16396371, 16685295, 18156299, 18341469, 18367054, 19261215, 19637681, 19637934, 19966557, 20, 20033615, 20077270, 22552590, 2384071, 30923, 3475, 35395379, 44058808, 44423, 4494, 5017, 5545862, 5702, 5789532, 6141832, 633, 633793, 650013, 657863, 66, 718173, 7239422, 749863, 796571, 796601, 814304, 8294212, 898691, 9395832];
+        var followers = [11739852, 12308052, 13530292, 14058085, 14058661, 14194355, 1456971, 15100745, 15347965, 15535003, 16302984, 16396371, 16536546, 16620018, 16685295, 17217488, 18156299, 18965566, 19682488, 19962204, 20033615, 2120341, 21925947, 23942240, 2857881, 29181098, 30005989, 30309716, 37981058, 43096838, 4494, 4609581, 48903640, 5017, 52757804, 5545862, 55519638, 56952760, 57679195, 5789532, 6010242, 6270652, 6819392, 69199251, 718173, 72275029, 7239422, 796571, 796601, 80008853, 814304, 81506357];
+
+        var only_followers = new Array();
+        var only_following = new Array();
+        var mutual = new Array();
+
+        load_diffs(following.sort(compare_numerically), followers.sort(compare_numerically), only_followers, only_following, mutual);
+
+        equals(mutual.length, 19, "mutual");
+        equals(only_followers.length, 33, "only_followers");
+        equals(only_following.length, 31, "only_following");
+    });
+
+
+
+});
+    </script>
+
+</head>
+<body>
+    <h1 id="qunit-header">Tweepsect QUnit Tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>
+

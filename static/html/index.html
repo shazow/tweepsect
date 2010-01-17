@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<meta content="en-us" http-equiv="Content-Language" />
+<meta content="Tweepsect is a tool for finding the intersection between the set of people who follow you and you follow. It also has an ASCII throbber." name="description" />
+<meta name="google-site-verification" content="vwwk7PLbSkK46GJW4enxdqYR5VQqHLIbjbzPkItZYYo" />
+
+<title>tweepsect | stalkers exposed</title>
+
+<script src="http://www.google.com/jsapi"></script>
+<script type="text/javascript" src="/static/js/sha1.js"></script>
+<script type="text/javascript" src="/static/js/oauth.js"></script>
+<script type="text/javascript" src="/static/js/jsoauthapi.js?28"></script>
+<script>
+    google.load("jquery", "1");
+
+    /* We don't want to start messing around with things until jQuery etc is loaded. */
+    google.setOnLoadCallback(function() {
+        OAuth.app = "tweepsect";
+        if(window.location.host == "localhost:8080") OAuth.app = "tweepsect-test";
+
+        if(OAuth.accessor == undefined) {
+            $("#login").click(function() { OAuth.auth_redirect(); }).show();
+            try { _gat._getTracker("UA-407051-5")._trackPageview(); } catch(err) {}
+        } else {
+            $("#tweepsect_input").show();
+            $("#logout").click(function() { clear_cookies(); window.location.reload(); }).show();
+            log("Welcome! You're authenticated and ready to go, pick a Twitter user to inspect.");
+            try { _gat._getTracker("UA-407051-5")._trackPageview("/authed"); } catch(err) {}
+        }
+
+        $("#say_thanks a").click(function() {
+            $("#say_thanks form").toggle();
+            return false;
+        });
+        $("#say_thanks form").submit(function() {
+            post_tweet($("textarea", this).val());
+            return false;
+        });
+    });
+</script>
+<script type="text/javascript" src="/static/js/jquery.jsonp-1.1.0.min.js"></script>
+<script type="text/javascript" src="/static/js/tweepsect.js?28"></script>
+<link rel="stylesheet" href="/static/css/blueprint/screen.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/static/css/blueprint/print.css" type="text/css" media="print"> 
+<!--[if IE]>
+  <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection">
+<![endif]-->
+<link rel="stylesheet" href="/static/css/tweepsect.css?28" type="text/css">
+</head>
+<body>
+
+<div id="wrap">
+
+<div id="header" class="container">
+    <div class="span-5">
+        <a href="."><h1 style="margin-top: 10px;"><span class="blue">tweep</span><span class="red">sect</span></h1></a>
+    </div>
+    <div id="twitter_info" class="span-10">
+        <form id="tweepsect_input" onsubmit="get_results(); return false;">
+            <label for="username">Twitter Username</label><br />
+            <input id="username" type="text" />
+            <input value="Enlighten Me" type="submit" />
+            <span id="logout" class="auth_button">&laquo; Sign out</span>
+        </form>
+        <p>
+            <img id="login" class="auth_button" src="/static/images/Sign-in-with-Twitter-darker.png" alt="Sign in with Twitter" />
+        </p>
+    </div>
+    <div id="say_thanks" class="span-9 last">
+        <div>
+            <a href="http://twitter.com/home?status=I%20found%20my%20stalkers%20on%20Tweepsect%2C%20try%20it%20out%21%20http%3A//tweepsect.com/">Say thanks with a tweet. <span class="red">&hearts;</span></a>
+            <form action="http://twitter.com/home" method="get">
+                <textarea name="status" id="status"></textarea>
+                <input type="submit" value="Thanks &hearts;" style="width: 80px;" class="red"/>
+            </form>
+        </div>
+    </div>
+    <div id="progress" class="span-24 last">[\] Find out who Twitter users are stalking (and who is stalking them). <a href="http://jsoauth.appspot.com/api?function=auth&app=tweepsect">Sign in with Twitter to begin!</a></div>
+</div>
+
+<div id="results" class="container">
+    <div id="intro" class="container">
+        <div class="span-14">
+            <dl>
+                <dt >Tweep</dt>
+                <dd>A user of Twitter.</dd>
+                <dt>Stalker</dt>
+                <dd>A tweep who follows another who does not follow them back.</dd>
+                <dt><span class="blue">Tweep</span><span class="red">sect</span></dt>
+                <dd>Intersect a tweep's lists of followers and following tweeps to determine who is stalking the tweep and who the tweep is stalking.
+                </dd>
+            </dl>
+        </div>
+        <div class="span-10 last" style="text-align: center;">
+            <img src="/static/images/intersection.png" alt="Tweepsect venn diagram to show stalkers, stalking, followers, and following"/>
+        </div>
+    </div>
+    <div class="span-8" id="mutual"></div>
+    <div class="span-8" id="only_following"></div>
+    <div class="span-8 last" id="only_followers"></div>
+</div>
+
+</div>
+
+<div id="footer">A <strike>weekend</strike> project by @<a href="http://twitter.com/shazow">shazow</a></div>
+<!-- Design cleanup courtesy of Tracy Osborn (@limedaring) - http://limedaring.com/ -->
+
+<div id="templates">
+
+    <div id="floating_info_template">
+        <div class="floating_info">
+            <div class="floating_info_body">
+                <p><img src="{{ profile_image_url }}" /> <span class="name">{{ name }}</span></p>
+                <p>{{ friends_count }} following, {{ followers_count }} followers</p>
+                <p>Last tweet {{ last_tweet }}.</p>
+            </div>
+        </div>
+        <div class="floating_actions">
+            <div class="button"><i class="twitter_sprite follow" title="Follow"></i></div>
+            <div class="button"><i class="twitter_sprite unfollow" title="Unfollow"></i></div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>
