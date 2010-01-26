@@ -14,13 +14,21 @@
 <script type="text/javascript" src="/static/js/sha1.js"></script>
 <script type="text/javascript" src="/static/js/oauth.js"></script>
 <script type="text/javascript" src="/static/js/jsoauthapi.js?28"></script>
-<script>
+<script type="text/javascript" src="/static/js/tweepsect.js?28"></script>
+<script type="text/javascript">
     google.load("jquery", "1");
 
     /* We don't want to start messing around with things until jQuery etc is loaded. */
     google.setOnLoadCallback(function() {
         OAuth.app = "tweepsect";
-        if(window.location.host == "localhost:8080") OAuth.app = "tweepsect-test";
+
+        var data = parse_hash(window.location.hash);
+        if(!data) {
+            data = check_cookies();
+        }
+        if(data) load_accessor(data);
+
+        if(window.location.host == "10.0.0.8:8080") OAuth.app = "tweepsect-test";
 
         if(OAuth.accessor == undefined) {
             $("#login").click(function() { OAuth.auth_redirect(); }).show();
@@ -43,13 +51,12 @@
     });
 </script>
 <script type="text/javascript" src="/static/js/jquery.jsonp-1.1.0.min.js"></script>
-<script type="text/javascript" src="/static/js/tweepsect.js?28"></script>
-<link rel="stylesheet" href="/static/css/blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/static/css/blueprint/print.css" type="text/css" media="print"> 
+<link rel="stylesheet" href="/static/css/blueprint/screen.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/static/css/blueprint/print.css" type="text/css" media="print" />
 <!--[if IE]>
-  <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection">
+  <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection" />
 <![endif]-->
-<link rel="stylesheet" href="/static/css/tweepsect.css?28" type="text/css">
+<link rel="stylesheet" href="/static/css/tweepsect.css?28" type="text/css" />
 </head>
 <body>
 
@@ -126,6 +133,7 @@
     </div>
 
 </div>
+
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));

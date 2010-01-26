@@ -9,7 +9,7 @@ function throbber() {
     return throbber.animation[throbber.pos];
 }
 throbber.pos = 0;
-throbber.animation = "|/-\\";
+throbber.animation = ["|","/","-","\\"];
 
 /* Wrapper function for logging the progress. Utilizes the throbber. */
 function log(msg, extra) {

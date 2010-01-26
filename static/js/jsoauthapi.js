@@ -13,7 +13,7 @@ function parse_hash(hash) {
         params[kv[0]] = kv[1];
     });
 
-    window.location.hash = remainder_hash;
+    //window.location.hash = remainder_hash; /// FIXME: IE doesn't like this line, fix it.
     return params;
 }
 
@@ -43,6 +43,7 @@ function save_cookies(data) {
 }
 
 function load_accessor(data) {
+
     if(!(data.secret && data.token && data.consumer_secret && data.consumer_key)) {
         return;
     }
@@ -56,11 +57,6 @@ function load_accessor(data) {
 }
 
 google.setOnLoadCallback(function() {
-    var data = parse_hash(window.location.hash);
-    if(!data) {
-        data = check_cookies();
-    }
-    if(data) load_accessor(data);
 
     OAuth.auth_redirect = function() {
         window.location.replace("http://jsoauth.appspot.com/api?function=auth&app=" + OAuth.app);
