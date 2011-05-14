@@ -13,7 +13,7 @@ throbber.animation = ["|","/","-","\\"];
 
 /* Wrapper function for logging the progress. Utilizes the throbber. */
 function log(msg, extra) {
-    $("#progress").html("[" + throbber() +"] " + msg).attr("title", extra ? extra : "");
+    $("#progress").html("[" + throbber() +"] " + msg).prop("title", extra ? extra : "");
 }
 
 function compare_numerically(a, b) {
@@ -273,7 +273,7 @@ function get_results() {
     try { _gat._getTracker("UA-407051-5")._trackPageview("/query"); } catch(err) {}
 
 
-    var username = $("#username").attr("value");
+    var username = $("#username").prop("value");
     if(!username) {
         log("Pick a tweep means put a Twitter username in the input box, like 'shazow'. Try it.");
         return;
@@ -365,7 +365,7 @@ function post_tweet(text) {
 }
 
 function tweepsect(screen_name) {
-    $("#username").attr("value", screen_name);
+    $("#username").prop("value", screen_name);
     get_results();
 }
 
