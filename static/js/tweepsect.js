@@ -96,7 +96,7 @@ function check_limit(success_callback) {
 /* Fetch the current remaining_hits status for the user's Twitter API. */
 log("Checking Twitter API query limits.");
 
-var api_target = "https://twitter.com/account/rate_limit_status.json"
+var api_target = "https://api.twitter.com/1/account/rate_limit_status.json"
 return query_twitter(api_target, {}, function(data) {
     remaining_hits = data.remaining_hits;
     success_callback();
@@ -107,7 +107,7 @@ function get_followx(type, screen_name, callback) {
 var users_hash = {};
 var users_array = [];
 
-query_twitter("https://twitter.com/"+ type +"/ids.json", {screen_name: screen_name}, function(data) {
+query_twitter("https://api.twitter.com/1/"+ type +"/ids.json", {screen_name: screen_name}, function(data) {
     $.each(data, function(i, id) { users_hash[id] = true; users_array.push(id); });
     callback(users_hash, users_array.sort(compare_numerically));
 });
@@ -175,12 +175,12 @@ function load_twitter(api_target, cursor, item_callback, iter_callback, success_
 }
 
 function load_followers(username, item_callback, iter_callback, success_callback) {
-    var api_target = "https://twitter.com/statuses/followers/" + username + ".json";
+    var api_target = "https://api.twitter.com/1/statuses/followers/" + username + ".json";
     load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
 }
 
 function load_following(username, item_callback, iter_callback, success_callback) {
-    var api_target = "https://twitter.com/statuses/friends/" + username + ".json";
+    var api_target = "https://api.twitter.com/1/statuses/friends/" + username + ".json";
     load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
 }
 
@@ -335,7 +335,7 @@ function get_results() {
 
 function unfollow(screen_name) {
     log("Unfollowing...");
-    var api_target = "https://twitter.com/friendships/destroy/" + screen_name +".xml";
+    var api_target = "https://api.twitter.com/1/friendships/destroy/" + screen_name +".xml";
 
     remaining_hits -= 1;
     OAuth.post(api_target, {}, function() {
@@ -345,7 +345,7 @@ function unfollow(screen_name) {
 
 function follow(screen_name) {
     log("Following...");
-    var api_target = "https://twitter.com/friendships/create/" + screen_name +".xml";
+    var api_target = "https://api.twitter.com/1/friendships/create/" + screen_name +".xml";
 
     remaining_hits -= 1;
     OAuth.post(api_target, {}, function() {
@@ -355,7 +355,7 @@ function follow(screen_name) {
 
 function post_tweet(text) {
     log("Posting tweet...");
-    var api_target = "https://twitter.com/statuses/update.xml";
+    var api_target = "https://api.twitter.com/1/statuses/update.xml";
 
     remaining_hits -= 1;
     OAuth.post(api_target, {"status": text}, function() {

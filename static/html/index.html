@@ -29,7 +29,7 @@
         }
         if(data) load_accessor(data);
 
-        if(window.location.host == "10.0.0.8:8080") OAuth.app = "tweepsect-test";
+        if(window.location.port == "8080") OAuth.app = "tweepsect-test";
 
         if(OAuth.accessor == undefined) {
             $("#login").click(function() { OAuth.auth_redirect(); }).show();
