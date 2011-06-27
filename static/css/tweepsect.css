@@ -187,3 +187,15 @@ body > #wrap {
 .twitter_sprite.block { background-position:-144px -32px; }
 .twitter_sprite.block:hover { background-position:-128px -32px; }
 .twitter_sprite.stale { background-position: -208px 0px; position: absolute; top: 1px; right: -15px;}
+
+#warning {
+    color: #733;
+    font-size: 1.4em;
+    padding: 1em;
+    margin: 1em auto;
+    border: 1px solid #aaa;
+    background: #eee;
+}
+#warning strong {
+    color: red;
+}
