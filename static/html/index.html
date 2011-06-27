@@ -41,6 +41,7 @@
             try { _gat._getTracker("UA-407051-5")._trackPageview("/authed"); } catch(err) {}
         }
 
+        /*
         $("#say_thanks a").click(function() {
             $("#say_thanks form").toggle();
             return false;
@@ -49,6 +50,7 @@
             post_tweet($("textarea", this).val());
             return false;
         });
+        */
     });
 </script>
 <script type="text/javascript" src="/static/js/jquery.jsonp-1.1.0.min.js"></script>
@@ -57,7 +59,7 @@
 <!--[if IE]>
   <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection" />
 <![endif]-->
-<link rel="stylesheet" href="/static/css/tweepsect.css?28" type="text/css" />
+<link rel="stylesheet" href="/static/css/tweepsect.css?29" type="text/css" />
 </head>
 <body>
 
@@ -78,6 +80,7 @@
             <img id="login" class="auth_button" src="/static/images/Sign-in-with-Twitter-darker.png" alt="Sign in with Twitter" />
         </p>
     </div>
+    <!--
     <div id="say_thanks" class="span-9 last">
         <div>
             <a href="http://twitter.com/home?status=I%20found%20my%20stalkers%20on%20Tweepsect%2C%20try%20it%20out%21%20http%3A//tweepsect.com/">Say thanks with a tweet. <span class="red">&hearts;</span></a>
@@ -87,6 +90,7 @@
             </form>
         </div>
     </div>
+    -->
     <div id="progress" class="span-24 last">[\] Find out who Twitter users are stalking (and who is stalking them). <a href="http://jsoauth.appspot.com/api?function=auth&app=tweepsect">Sign in with Twitter to begin!</a></div>
 </div>
 <div id="warning" class="container">
@@ -131,8 +135,10 @@
             </div>
         </div>
         <div class="floating_actions">
-            <div class="button"><i class="twitter_sprite follow" title="Follow"></i></div>
+            <!--
+            <div class='button"><i class="twitter_sprite follow" title="Follow"></i></div>
             <div class="button"><i class="twitter_sprite unfollow" title="Unfollow"></i></div>
+            -->
         </div>
     </div>
 
