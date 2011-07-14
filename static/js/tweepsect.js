@@ -237,7 +237,6 @@ function decorate_tweep(item) {
             var html = $(render_template("floating_info_template", info));
 
             var self = this;
-            /*
             $(".follow", html).click(function() {
                 follow(info.screen_name);
                 $(self).removeClass("unfollowed");
@@ -248,7 +247,6 @@ function decorate_tweep(item) {
                 $(self).removeClass("followed");
                 $(self).addClass("unfollowed");
             });
-            */
             this.floating_info = html;
             $(this).append(html);
             $(this).addClass("floating_row");
