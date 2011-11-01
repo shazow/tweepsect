@@ -93,50 +93,50 @@ TweepSet.prototype.add_member = function(tweep, fade) {
 /***/
 
 function check_limit(success_callback) {
-/* Fetch the current remaining_hits status for the user's Twitter API. */
-log("Checking Twitter API query limits.");
+    /* Fetch the current remaining_hits status for the user's Twitter API. */
+    log("Checking Twitter API query limits.");
 
-var api_target = "https://api.twitter.com/1/account/rate_limit_status.json"
-return query_twitter(api_target, {}, function(data) {
-    remaining_hits = data.remaining_hits;
-    success_callback();
-});
+    var api_target = "https://api.twitter.com/1/account/rate_limit_status.json"
+    return query_twitter(api_target, {}, function(data) {
+        remaining_hits = data.remaining_hits;
+        success_callback();
+    });
 }
 
 function get_followx(type, screen_name, callback) {
-var users_hash = {};
-var users_array = [];
+    var users_hash = {};
+    var users_array = [];
 
-query_twitter("https://api.twitter.com/1/"+ type +"/ids.json", {screen_name: screen_name}, function(data) {
-    $.each(data, function(i, id) { users_hash[id] = true; users_array.push(id); });
-    callback(users_hash, users_array.sort(compare_numerically));
-});
+    query_twitter("https://api.twitter.com/1/"+ type +"/ids.json", {screen_name: screen_name}, function(data) {
+        $.each(data, function(i, id) { users_hash[id] = true; users_array.push(id); });
+        callback(users_hash, users_array.sort(compare_numerically));
+    });
 }
 
 function get_following(screen_name, callback) { get_followx("friends", screen_name, callback); }
 function get_followers(screen_name, callback) { get_followx("followers", screen_name, callback); }
 
 function get_social_ids(screen_name, callback) {
-log("Loading social network counts.");
-var only_followers = new Array();
-var only_following = new Array();
-var mutual = new Array();
+    log("Loading social network counts.");
+    var only_followers = new Array();
+    var only_following = new Array();
+    var mutual = new Array();
 
-get_following(screen_name, function(following_hash, following) { get_followers(screen_name, function(followers_hash, followers) {
-    /// TODO: This could be done better...
-    load_diffs(following, followers, only_followers, only_following, mutual);
+    get_following(screen_name, function(following_hash, following) { get_followers(screen_name, function(followers_hash, followers) {
+        /// TODO: This could be done better...
+        load_diffs(following, followers, only_followers, only_following, mutual);
 
-    callback({
-        only_followers: only_followers,
-        only_following: only_following,
-        mutual: mutual,
-        following: following,
-        following_hash: following_hash,
-        followers: followers,
-        followers_hash: followers_hash
-        });
+        callback({
+            only_followers: only_followers,
+            only_following: only_following,
+            mutual: mutual,
+            following: following,
+            following_hash: following_hash,
+            followers: followers,
+            followers_hash: followers_hash
+            });
 
-    }); });
+        }); });
 }
 
 /* Confirmation message for when we're starting to get low on remaining hits. */
