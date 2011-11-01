@@ -36,7 +36,7 @@
             try { _gat._getTracker("UA-407051-5")._trackPageview(); } catch(err) {}
         } else {
             $("#tweepsect_input").show();
-            $("#logout").click(function() { clear_cookies(); window.location.reload(); }).show();
+            $("#logout").click(function() { clear_cookies(); window.location.href = '/'; }).show();
             log("Welcome! You're authenticated and ready to go, pick a Twitter user to inspect.");
             try { _gat._getTracker("UA-407051-5")._trackPageview("/authed"); } catch(err) {}
         }

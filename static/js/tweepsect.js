@@ -108,7 +108,7 @@ function get_followx(type, screen_name, callback) {
     var users_array = [];
 
     query_twitter("https://api.twitter.com/1/"+ type +"/ids.json", {screen_name: screen_name}, function(data) {
-        $.each(data, function(i, id) { users_hash[id] = true; users_array.push(id); });
+        $.each(data.ids, function(i, id) { users_hash[id] = true; users_array.push(id); });
         callback(users_hash, users_array.sort(compare_numerically));
     });
 }
@@ -166,7 +166,7 @@ function load_twitter(api_target, cursor, item_callback, iter_callback, success_
 
         iter_callback(data.users.length);
 
-        if(data.next_cursor && (remaining_hits > 30 || confirm_api())) {
+        if(data.next_cursor && data.next_cursor > 0 && (remaining_hits > 30 || confirm_api())) {
             load_twitter(api_target, data.next_cursor, item_callback, iter_callback, success_callback);
         } else {
             if($.isFunction(success_callback)) success_callback();
