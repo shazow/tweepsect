@@ -187,7 +187,7 @@ function load_following(username, item_callback, iter_callback, success_callback
 }
 
 function load_list_members(username, slug, item_callback, iter_callback, success_callback) {
-    var api_target = "https://api.twitter.com/1/list/members.json?username=" + username + "&slug=" + slug;
+    var api_target = "https://api.twitter.com/1/lists/members.json?owner_screen_name=" + username + "&slug=" + slug;
     load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
 }
 
