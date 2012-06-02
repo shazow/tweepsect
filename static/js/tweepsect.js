@@ -2,6 +2,8 @@ var remaining_hits = 200;
 var confirmed_api = false;
 var now = new Date();
 
+var whitelist;
+
 /* A simple throbber, for the lols and bonus internets. */
 function throbber() {
     throbber.pos += 1;
@@ -135,8 +137,8 @@ function get_social_ids(screen_name, callback) {
             followers: followers,
             followers_hash: followers_hash
             });
-
-        }); });
+        });
+    });
 }
 
 /* Confirmation message for when we're starting to get low on remaining hits. */
@@ -164,7 +166,7 @@ function load_twitter(api_target, cursor, item_callback, iter_callback, success_
         }
         $.each(data.users, function(i, item) { item_callback(item); });
 
-        iter_callback(data.users.length);
+        if($.isFunction(iter_callback)) iter_callback(data.users.length);
 
         if(data.next_cursor && data.next_cursor > 0 && (remaining_hits > 30 || confirm_api())) {
             load_twitter(api_target, data.next_cursor, item_callback, iter_callback, success_callback);
@@ -182,6 +184,18 @@ function load_followers(username, item_callback, iter_callback, success_callback
 function load_following(username, item_callback, iter_callback, success_callback) {
     var api_target = "https://api.twitter.com/1/statuses/friends/" + username + ".json";
     load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
+}
+
+function load_list_members(username, slug, item_callback, iter_callback, success_callback) {
+    var api_target = "https://api.twitter.com/1/list/members.json?username=" + username + "&slug=" + slug;
+    load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
+}
+
+function generate_whitelist(username, slug) {
+    whitelist = {};
+    load_list_members(username, slug, function(item) {
+        whitelist[item.id] = true;
+    });
 }
 
 function load_diffs(following, followers, only_followers, only_following, mutual) {
@@ -272,7 +286,6 @@ function get_results() {
     $("#intro").hide();
     try { _gat._getTracker("UA-407051-5")._trackPageview("/query"); } catch(err) {}
 
-
     var username = $("#username").prop("value");
     if(!username) {
         log("Pick a tweep means put a Twitter username in the input box, like 'shazow'. Try it.");
@@ -301,6 +314,7 @@ function get_results() {
 
             function render_item(item) {
                 /* (Called for every item) Notify each TweepSet of a potential new member */
+                if(whitelist && !whitelist[item.id]) return; // Descriminate against this tweep.
                 var fade = processed_count < MAX_FADE;
                 tset_mutual.add_member(item, fade);
                 tset_only_following.add_member(item, fade);
