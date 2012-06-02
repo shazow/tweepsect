@@ -282,16 +282,33 @@ function show_thanks() {
     $("#say_thanks textarea").val(THANKS_PHRASES[0]); /// TODO: Randomize
 }
 
+function parse_username(input) {
+    if(input[0] == "@") return {username: input.substr(1)};
+    if(input.indexOf("://") >= 0) {
+        // Parse list
+        input = input.split(".com/", 2)[1];
+        if(input[0] == "#") input = input.split("#!/", 2)[1];
+        var parts = input.split("/", 2);
+        return {
+            username: parts[0],
+            listname: parts[1].split("/", 2)[0]
+        }
+    }
+    return {username: input};
+}
+
 function get_results() {
     $("#intro").hide();
     try { _gat._getTracker("UA-407051-5")._trackPageview("/query"); } catch(err) {}
 
-    var username = $("#username").prop("value");
-    if(!username) {
+    var input = $("#username").prop("value");
+    if(!input) {
         log("Pick a tweep means put a Twitter username in the input box, like 'shazow'. Try it.");
         return;
     }
-    if(username[0] == "@") username = username.substr(1);
+    var p = parse_username(input);
+    var username = p.username;
+    var listname = p.listname;
 
     var tset_mutual = new TweepSet("Mutual", $("#mutual"));
     var tset_only_following = new TweepSet("Stalking", $("#only_following"));
@@ -330,19 +347,24 @@ function get_results() {
                 log("Fetching tweeps: " + Math.round((processed_count / expected_total) * 100) + "%");
             }
 
-            var c = new CounterCallback(2, function() {
+            function completed() {
                 /* Callback to trigger when both parallel AJAX chains are done */
                 var time_elapsed = (new Date).getTime() - time_start;
                 log("Done! With " + remaining_hits + " API calls left to spare, do another?",
                     processed_count + " tweeps loaded using " + (hits_start - remaining_hits) + " API calls in " + time_elapsed/1000 + " seconds.");
                 show_thanks();
-            });
+            }
 
             log("Fetching tweeps: 0%");
 
-            // Start parallel AJAX chains, wee
-            load_followers(username, render_item, iter_callback, c);
-            load_following(username, render_item, iter_callback, c);
+            if(!listname) {
+                // Start parallel AJAX chains, wee
+                var c = new CounterCallback(2, completed);
+                load_followers(username, render_item, iter_callback, c);
+                load_following(username, render_item, iter_callback, c);
+            } else {
+                load_list_members(username, listname, render_item, iter_callback, completed);
+            }
         });
     });
 }
