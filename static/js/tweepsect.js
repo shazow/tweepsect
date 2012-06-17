@@ -124,18 +124,19 @@ function get_social_ids(screen_name, callback) {
     var only_following = new Array();
     var mutual = new Array();
 
-    get_following(screen_name, function(following_hash, following) { get_followers(screen_name, function(followers_hash, followers) {
-        /// TODO: This could be done better...
-        load_diffs(following, followers, only_followers, only_following, mutual);
+    get_following(screen_name, function(following_hash, following) {
+        get_followers(screen_name, function(followers_hash, followers) {
+            /// TODO: This could be done better...
+            load_diffs(following, followers, only_followers, only_following, mutual);
 
-        callback({
-            only_followers: only_followers,
-            only_following: only_following,
-            mutual: mutual,
-            following: following,
-            following_hash: following_hash,
-            followers: followers,
-            followers_hash: followers_hash
+            callback({
+                only_followers: only_followers,
+                only_following: only_following,
+                mutual: mutual,
+                following: following,
+                following_hash: following_hash,
+                followers: followers,
+                followers_hash: followers_hash
             });
         });
     });
@@ -154,7 +155,10 @@ function confirm_api() {
 function query_twitter(api_target, params, callback) {
     remaining_hits -= 1;
     return OAuth.getJSON(api_target, params, callback, function() {
-        log("Twitter API is suffering from epic failulitis. Refresh and hope for the best?");       
+        // Retry one more time for kicks:
+        return OAuth.getJSON(api_target, params, callback, function() {
+            log("Twitter API is suffering from epic failulitis. Refresh and hope for the best?");
+        });
     });
 }
 
@@ -190,6 +194,45 @@ function load_list_members(username, slug, item_callback, iter_callback, success
     var api_target = "https://api.twitter.com/1/lists/members.json?owner_screen_name=" + username + "&slug=" + slug;
     load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
 }
+
+function load_users(user_ids, item_callback, iter_callback, success_callback) {
+    var api_target = "https://api.twitter.com/1/users/lookup.json";
+
+    function get_user_ids() {
+        var ids = [];
+        for(var i=100; i>0; i--) {
+            var id = user_ids.shift();
+            if(!id) break;
+            ids.push(id);
+        }
+        return ids;
+    }
+
+    function callback(data) {
+        if(data) {
+            if(data.error) {
+                log("Twitter returned an error: " + data.error);
+                return;
+            }
+            $.each(data, function(i, item) { item_callback(item); });
+            if($.isFunction(iter_callback)) iter_callback(data.length);
+        }
+
+        var ids = get_user_ids().join(',');
+        if(!ids) {
+            if($.isFunction(success_callback)) success_callback();
+            return;
+        }
+
+        if (remaining_hits > 30 || confirm_api()) {
+            query_twitter(api_target, {'user_id': ids}, callback);
+        }
+    }
+
+    // Commence recursing
+    callback();
+}
+
 
 function generate_whitelist(username, slug) {
     whitelist = {};
@@ -359,9 +402,10 @@ function get_results() {
 
             if(!listname) {
                 // Start parallel AJAX chains, wee
-                var c = new CounterCallback(2, completed);
-                load_followers(username, render_item, iter_callback, c);
-                load_following(username, render_item, iter_callback, c);
+                var c = new CounterCallback(3, completed);
+                load_users(r['mutual'], render_item, iter_callback, c);
+                load_users(r['only_following'], render_item, iter_callback, c);
+                load_users(r['only_followers'], render_item, iter_callback, c);
             } else {
                 load_list_members(username, listname, render_item, iter_callback, completed);
             }
