@@ -2,6 +2,8 @@ var remaining_hits = 200;
 var confirmed_api = false;
 var now = new Date();
 
+var whitelist;
+
 /* A simple throbber, for the lols and bonus internets. */
 function throbber() {
     throbber.pos += 1;
@@ -122,21 +124,22 @@ function get_social_ids(screen_name, callback) {
     var only_following = new Array();
     var mutual = new Array();
 
-    get_following(screen_name, function(following_hash, following) { get_followers(screen_name, function(followers_hash, followers) {
-        /// TODO: This could be done better...
-        load_diffs(following, followers, only_followers, only_following, mutual);
+    get_following(screen_name, function(following_hash, following) {
+        get_followers(screen_name, function(followers_hash, followers) {
+            /// TODO: This could be done better...
+            load_diffs(following, followers, only_followers, only_following, mutual);
 
-        callback({
-            only_followers: only_followers,
-            only_following: only_following,
-            mutual: mutual,
-            following: following,
-            following_hash: following_hash,
-            followers: followers,
-            followers_hash: followers_hash
+            callback({
+                only_followers: only_followers,
+                only_following: only_following,
+                mutual: mutual,
+                following: following,
+                following_hash: following_hash,
+                followers: followers,
+                followers_hash: followers_hash
             });
-
-        }); });
+        });
+    });
 }
 
 /* Confirmation message for when we're starting to get low on remaining hits. */
@@ -152,7 +155,10 @@ function confirm_api() {
 function query_twitter(api_target, params, callback) {
     remaining_hits -= 1;
     return OAuth.getJSON(api_target, params, callback, function() {
-        log("Twitter API is suffering from epic failulitis. Refresh and hope for the best?");       
+        // Retry one more time for kicks:
+        return OAuth.getJSON(api_target, params, callback, function() {
+            log("Twitter API is suffering from epic failulitis. Refresh and hope for the best?");
+        });
     });
 }
 
@@ -164,7 +170,7 @@ function load_twitter(api_target, cursor, item_callback, iter_callback, success_
         }
         $.each(data.users, function(i, item) { item_callback(item); });
 
-        iter_callback(data.users.length);
+        if($.isFunction(iter_callback)) iter_callback(data.users.length);
 
         if(data.next_cursor && data.next_cursor > 0 && (remaining_hits > 30 || confirm_api())) {
             load_twitter(api_target, data.next_cursor, item_callback, iter_callback, success_callback);
@@ -182,6 +188,57 @@ function load_followers(username, item_callback, iter_callback, success_callback
 function load_following(username, item_callback, iter_callback, success_callback) {
     var api_target = "https://api.twitter.com/1/statuses/friends/" + username + ".json";
     load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
+}
+
+function load_list_members(username, slug, item_callback, iter_callback, success_callback) {
+    var api_target = "https://api.twitter.com/1/lists/members.json?owner_screen_name=" + username + "&slug=" + slug;
+    load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
+}
+
+function load_users(user_ids, item_callback, iter_callback, success_callback) {
+    var api_target = "https://api.twitter.com/1/users/lookup.json";
+
+    function get_user_ids() {
+        var ids = [];
+        for(var i=100; i>0; i--) {
+            var id = user_ids.shift();
+            if(!id) break;
+            ids.push(id);
+        }
+        return ids;
+    }
+
+    function callback(data) {
+        if(data) {
+            if(data.error) {
+                log("Twitter returned an error: " + data.error);
+                return;
+            }
+            $.each(data, function(i, item) { item_callback(item); });
+            if($.isFunction(iter_callback)) iter_callback(data.length);
+        }
+
+        var ids = get_user_ids().join(',');
+        if(!ids) {
+            if($.isFunction(success_callback)) success_callback();
+            return;
+        }
+
+        if (remaining_hits > 30 || confirm_api()) {
+            query_twitter(api_target, {'user_id': ids}, callback);
+        }
+    }
+
+    // Commence recursing
+    callback();
+}
+
+
+function generate_whitelist(username, slug) {
+    whitelist = {};
+    load_list_members(username, slug, function(item) {
+        whitelist[item.id] = true;
+    });
 }
 
 function load_diffs(following, followers, only_followers, only_following, mutual) {
@@ -268,17 +325,33 @@ function show_thanks() {
     $("#say_thanks textarea").val(THANKS_PHRASES[0]); /// TODO: Randomize
 }
 
+function parse_username(input) {
+    if(input[0] == "@") return {username: input.substr(1)};
+    if(input.indexOf("://") >= 0) {
+        // Parse list
+        input = input.split(".com/", 2)[1];
+        if(input[0] == "#") input = input.split("#!/", 2)[1];
+        var parts = input.split("/", 2);
+        return {
+            username: parts[0],
+            listname: parts[1].split("/", 2)[0]
+        }
+    }
+    return {username: input};
+}
+
 function get_results() {
     $("#intro").hide();
     try { _gat._getTracker("UA-407051-5")._trackPageview("/query"); } catch(err) {}
 
-
-    var username = $("#username").prop("value");
-    if(!username) {
+    var input = $("#username").prop("value");
+    if(!input) {
         log("Pick a tweep means put a Twitter username in the input box, like 'shazow'. Try it.");
         return;
     }
-    if(username[0] == "@") username = username.substr(1);
+    var p = parse_username(input);
+    var username = p.username;
+    var listname = p.listname;
 
     var tset_mutual = new TweepSet("Mutual", $("#mutual"));
     var tset_only_following = new TweepSet("Stalking", $("#only_following"));
@@ -301,6 +374,7 @@ function get_results() {
 
             function render_item(item) {
                 /* (Called for every item) Notify each TweepSet of a potential new member */
+                if(whitelist && !whitelist[item.id]) return; // Descriminate against this tweep.
                 var fade = processed_count < MAX_FADE;
                 tset_mutual.add_member(item, fade);
                 tset_only_following.add_member(item, fade);
@@ -316,19 +390,25 @@ function get_results() {
                 log("Fetching tweeps: " + Math.round((processed_count / expected_total) * 100) + "%");
             }
 
-            var c = new CounterCallback(2, function() {
+            function completed() {
                 /* Callback to trigger when both parallel AJAX chains are done */
                 var time_elapsed = (new Date).getTime() - time_start;
                 log("Done! With " + remaining_hits + " API calls left to spare, do another?",
                     processed_count + " tweeps loaded using " + (hits_start - remaining_hits) + " API calls in " + time_elapsed/1000 + " seconds.");
                 show_thanks();
-            });
+            }
 
             log("Fetching tweeps: 0%");
 
-            // Start parallel AJAX chains, wee
-            load_followers(username, render_item, iter_callback, c);
-            load_following(username, render_item, iter_callback, c);
+            if(!listname) {
+                // Start parallel AJAX chains, wee
+                var c = new CounterCallback(3, completed);
+                load_users(r['mutual'], render_item, iter_callback, c);
+                load_users(r['only_following'], render_item, iter_callback, c);
+                load_users(r['only_followers'], render_item, iter_callback, c);
+            } else {
+                load_list_members(username, listname, render_item, iter_callback, completed);
+            }
         });
     });
 }
