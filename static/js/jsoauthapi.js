@@ -78,18 +78,19 @@ google.setOnLoadCallback(function() {
         message.parameters['oauth_signature_method'] = 'HMAC-SHA1';
 
         OAuth.completeRequest(message, OAuth.accessor);
-        var signed_url = OAuth.addToURL(message.action, message.parameters); 
+        var signed_url = OAuth.addToURL(message.action, message.parameters);
 
         return signed_url;
     }
 
     OAuth.getJSON = function(url, parameters, callback_success, callback_error) {
         parameters['callback'] = "json_callback";
-        
+
         var signed_url = OAuth.get_signed_url(url, parameters);
 
         function try_again_callback() {
             return $.jsonp({
+                cache: true, // Don't include junk in our signed_url.
                 success: callback_success,
                 error: callback_error,
                 callback: "json_callback",
@@ -98,6 +99,7 @@ google.setOnLoadCallback(function() {
         }
 
         return $.jsonp({
+            cache: true, // Don't include junk in our signed_url.
             success: callback_success,
             error: try_again_callback,
             callback: "json_callback",
@@ -130,27 +132,27 @@ google.setOnLoadCallback(function() {
  */
 
 function set_cookie(name, value, seconds) {
-	if (seconds) {
-		var date = new Date();
-		date.setTime(date.getTime()+(seconds*1000));
-		var expires = "; expires="+date.toGMTString();
-	}
-	else var expires = "";
-	document.cookie = name+"="+value+expires+"; path=/";
+    if (seconds) {
+        var date = new Date();
+        date.setTime(date.getTime()+(seconds*1000));
+        var expires = "; expires="+date.toGMTString();
+    }
+    else var expires = "";
+    document.cookie = name+"="+value+expires+"; path=/";
 }
 
 function get_cookie(name) {
-	var nameEQ = name + "=";
-	var ca = document.cookie.split(';');
-	for(var i=0;i < ca.length;i++) {
-		var c = ca[i];
-		while (c.charAt(0)==' ') c = c.substring(1,c.length);
-		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-	}
-	return null;
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
 }
 
 function delete_cookie(name) {
-	set_cookie(name, "", -1000);
+    set_cookie(name, "", -1000);
 }
 

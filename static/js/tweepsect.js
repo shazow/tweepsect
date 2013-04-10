@@ -1,6 +1,9 @@
+var total_api_requests = 0;
 var remaining_hits = 200;
+var remaining_lookup = {};
 var confirmed_api = false;
 var now = new Date();
+var twitter_api_prefix = 'https://api.twitter.com/1.1'
 
 var whitelist;
 
@@ -94,13 +97,32 @@ TweepSet.prototype.add_member = function(tweep, fade) {
 
 /***/
 
+function get_min_limit() {
+    var min_percents = $.map(remaining_lookup, function(v, k) { return v.percent; });
+    return Math.min.apply(Math, min_percents);
+}
+
 function check_limit(success_callback) {
     /* Fetch the current remaining_hits status for the user's Twitter API. */
     log("Checking Twitter API query limits.");
 
-    var api_target = "https://api.twitter.com/1/account/rate_limit_status.json"
+    var targets = [
+        {name: 'friends', resource: '/friends/ids'},
+        {name: 'followers', resource: '/followers/ids'},
+        {name: 'lists', resource: '/lists/members'},
+        {name: 'users', resource: '/users/lookup'}
+    ];
+    var resource_list_str = $(targets).map(function(i, o) { return o.name }).toArray().join(',');
+    var api_target = "/application/rate_limit_status.json?resources=" + resource_list_str;
+
     return query_twitter(api_target, {}, function(data) {
-        remaining_hits = data.remaining_hits;
+        var all_remaining = $(targets).map(function(i, o) {
+            var r = data['resources'][o.name][o.resource];
+            remaining_lookup[o.resource] = r;
+            r.percent = (r.remaining / r.limit) * 100;
+            return r.remaining;
+        });
+        remaining_hits = Math.min.apply(Math, all_remaining);
         success_callback();
     });
 }
@@ -109,7 +131,7 @@ function get_followx(type, screen_name, callback) {
     var users_hash = {};
     var users_array = [];
 
-    query_twitter("https://api.twitter.com/1/"+ type +"/ids.json", {screen_name: screen_name}, function(data) {
+    query_twitter("/" + type + "/ids.json", {screen_name: screen_name}, function(data) {
         $.each(data.ids, function(i, id) { users_hash[id] = true; users_array.push(id); });
         callback(users_hash, users_array.sort(compare_numerically));
     });
@@ -144,19 +166,26 @@ function get_social_ids(screen_name, callback) {
 
 /* Confirmation message for when we're starting to get low on remaining hits. */
 function confirm_api() {
-    if(remaining_hits<5) {
+    if(get_min_limit() < 20) {
         log("Getting dangerously close to getting banned from Twitter. No more requests for a while, please.");
         return false;
     }
-    confirmed_api = confirmed_api || confirm("Warning: Performing too many queries on the Twitter API could cause Twitter to block you temporarily. You have " + remaining_hits + " queries remaining for this hour, are you sure you want to continue?");
+    confirmed_api = confirmed_api || confirm("Warning: Performing too many queries on the Twitter API could cause Twitter to block you temporarily. You have " + smallest_remaining() + "% queries remaining for this hour, are you sure you want to continue?");
     return confirmed_api;
 }
 
 function query_twitter(api_target, params, callback) {
-    remaining_hits -= 1;
-    return OAuth.getJSON(api_target, params, callback, function() {
+    var remaining = remaining_lookup[api_target];
+    if (remaining) {
+        remaining.remaining -= 1;
+        remaining.percent = (remaining.remaining / remaining.limit) * 100;
+    }
+    total_api_requests += 1;
+
+    var target_url = twitter_api_prefix + api_target;
+    return OAuth.getJSON(target_url, params, callback, function() {
         // Retry one more time for kicks:
-        return OAuth.getJSON(api_target, params, callback, function() {
+        return OAuth.getJSON(target_url, params, callback, function() {
             log("Twitter API is suffering from epic failulitis. Refresh and hope for the best?");
         });
     });
@@ -172,7 +201,7 @@ function load_twitter(api_target, cursor, item_callback, iter_callback, success_
 
         if($.isFunction(iter_callback)) iter_callback(data.users.length);
 
-        if(data.next_cursor && data.next_cursor > 0 && (remaining_hits > 30 || confirm_api())) {
+        if(data.next_cursor && data.next_cursor > 0 && (get_min_limit() > 35 || confirm_api())) {
             load_twitter(api_target, data.next_cursor, item_callback, iter_callback, success_callback);
         } else {
             if($.isFunction(success_callback)) success_callback();
@@ -181,22 +210,22 @@ function load_twitter(api_target, cursor, item_callback, iter_callback, success_
 }
 
 function load_followers(username, item_callback, iter_callback, success_callback) {
-    var api_target = "https://api.twitter.com/1/statuses/followers/" + username + ".json";
+    var api_target = "/followers/list.json?screen_name=" + username;
     load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
 }
 
 function load_following(username, item_callback, iter_callback, success_callback) {
-    var api_target = "https://api.twitter.com/1/statuses/friends/" + username + ".json";
+    var api_target = "/friends/list.json?screen_name=" + username;
     load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
 }
 
 function load_list_members(username, slug, item_callback, iter_callback, success_callback) {
-    var api_target = "https://api.twitter.com/1/lists/members.json?owner_screen_name=" + username + "&slug=" + slug;
+    var api_target = "/lists/members.json?owner_screen_name=" + username + "&slug=" + slug;
     load_twitter(api_target, -1, item_callback, iter_callback, success_callback);
 }
 
 function load_users(user_ids, item_callback, iter_callback, success_callback) {
-    var api_target = "https://api.twitter.com/1/users/lookup.json";
+    var api_target = "/users/lookup.json";
 
     function get_user_ids() {
         var ids = [];
@@ -224,7 +253,7 @@ function load_users(user_ids, item_callback, iter_callback, success_callback) {
             return;
         }
 
-        if (remaining_hits > 30 || confirm_api()) {
+        if (get_min_limit() > 35 || confirm_api()) {
             query_twitter(api_target, {'user_id': ids}, callback);
         }
     }
@@ -361,7 +390,7 @@ function get_results() {
     var MAX_FADE = 1000; // When there's too much on the screen, it gets laggy
 
     check_limit(function() {
-        var hits_start = remaining_hits;
+        var hits_start = total_api_requests;
 
         get_social_ids(username, function(r) {
             var expected_total = r['followers'].length + r['following'].length;
@@ -393,8 +422,7 @@ function get_results() {
             function completed() {
                 /* Callback to trigger when both parallel AJAX chains are done */
                 var time_elapsed = (new Date).getTime() - time_start;
-                log("Done! With " + remaining_hits + " API calls left to spare, do another?",
-                    processed_count + " tweeps loaded using " + (hits_start - remaining_hits) + " API calls in " + time_elapsed/1000 + " seconds.");
+                log("Done! Loaded " + processed_count + " tweeps using " + (total_api_requests - hits_start) + " API calls in " + time_elapsed/1000 + " seconds.");
                 show_thanks();
             }
 
@@ -415,9 +443,8 @@ function get_results() {
 
 function unfollow(screen_name) {
     log("Unfollowing...");
-    var api_target = "https://api.twitter.com/1/friendships/destroy/" + screen_name +".xml";
+    var api_target = twitter_api_prefix + "/friendships/destroy.json?screen_name=" + screen_name;
 
-    remaining_hits -= 1;
     OAuth.post(api_target, {}, function() {
         log("Unfollowed: " + screen_name);
     });
@@ -425,23 +452,11 @@ function unfollow(screen_name) {
 
 function follow(screen_name) {
     log("Following...");
-    var api_target = "https://api.twitter.com/1/friendships/create/" + screen_name +".xml";
+    var api_target = twitter_api_prefix + "/friendships/create.json?screen_name=" + screen_name;
 
-    remaining_hits -= 1;
     OAuth.post(api_target, {}, function() {
         log("Followed: " + screen_name);
     });
-}
-
-function post_tweet(text) {
-    log("Posting tweet...");
-    var api_target = "https://api.twitter.com/1/statuses/update.xml";
-
-    remaining_hits -= 1;
-    OAuth.post(api_target, {"status": text}, function() {
-        log("Posted tweet, thank you! :)");
-    });
-
 }
 
 function tweepsect(screen_name) {
