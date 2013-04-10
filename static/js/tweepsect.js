@@ -349,9 +349,13 @@ THANKS_PHRASES = [
     "I &hearts; Tweepsect, try it! http://tweepsect.com/"
 ];
 
-function show_thanks() {
-    $("#say_thanks").show();
-    $("#say_thanks textarea").val(THANKS_PHRASES[0]); /// TODO: Randomize
+function set_thanks_text(s) {
+    var href = 'https://twitter.com/home?status=' + encodeURI(s);
+    $("#thanks-link").attr('href', href);
+}
+
+function show_thanks(tset_mutual, tset_only_following, tset_only_followers) {
+    set_thanks_text("Found my Twitter stalkers using Tweepsect (" + tset_mutual.count + " stalkers and " + tset_only_followers.count +" mutual friends), try it! http://tweepsect.com/");
 }
 
 function parse_username(input) {
@@ -423,7 +427,7 @@ function get_results() {
                 /* Callback to trigger when both parallel AJAX chains are done */
                 var time_elapsed = (new Date).getTime() - time_start;
                 log("Done! Loaded " + processed_count + " tweeps using " + (total_api_requests - hits_start) + " API calls in " + time_elapsed/1000 + " seconds.");
-                show_thanks();
+                show_thanks(tset_mutual, tset_only_following, tset_only_followers);
             }
 
             log("Fetching tweeps: 0%");
