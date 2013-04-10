@@ -166,11 +166,11 @@ function get_social_ids(screen_name, callback) {
 
 /* Confirmation message for when we're starting to get low on remaining hits. */
 function confirm_api() {
-    if(get_min_limit() < 20) {
+    if(get_min_limit() < 15) {
         log("Getting dangerously close to getting banned from Twitter. No more requests for a while, please.");
         return false;
     }
-    confirmed_api = confirmed_api || confirm("Warning: Performing too many queries on the Twitter API could cause Twitter to block you temporarily. You have " + smallest_remaining() + "% queries remaining for this hour, are you sure you want to continue?");
+    confirmed_api = confirmed_api || confirm("Warning: Performing too many queries on the Twitter API could cause Twitter to block you temporarily.\n\nYou have " + Math.round(get_min_limit()) + "% of your queries remaining for the next 15 minutes, are you sure you want to continue?\n\n(Safest to wait 15 minutes and try again.)");
     return confirmed_api;
 }
 
@@ -354,8 +354,13 @@ function set_thanks_text(s) {
     $("#thanks-link").attr('href', href);
 }
 
-function show_thanks(tset_mutual, tset_only_following, tset_only_followers) {
-    set_thanks_text("Found my Twitter stalkers using Tweepsect (" + tset_only_followers.count + " stalkers and " + tset_mutual.count +" mutual friends), try it! http://tweepsect.com/");
+function show_thanks(num_mutual, num_stalking, num_stalkers) {
+    // "A-B test" the message, for funsies.
+    if (Math.random() < 0.5) {
+        set_thanks_text("Found my Twitter stalkers using Tweepsect (" + num_stalkers + " stalkers and " + num_mutual +" mutual friends), try it! http://tweepsect.com/");
+    } else {
+        set_thanks_text("Found my " + num_stalkers + " stalkers on Twitter (and " + num_mutual + " mutual friends) by using Tweepsect, try it! http://tweepsect.com/");
+    }
 }
 
 function parse_username(input) {
@@ -405,6 +410,8 @@ function get_results() {
             tset_only_following.set_population(r['only_following']);
             tset_only_followers.set_population(r['only_followers']);
 
+            show_thanks(tset_mutual.count, tset_only_following.count, tset_only_followers.count);
+
             function render_item(item) {
                 /* (Called for every item) Notify each TweepSet of a potential new member */
                 if(whitelist && !whitelist[item.id]) return; // Descriminate against this tweep.
@@ -427,7 +434,6 @@ function get_results() {
                 /* Callback to trigger when both parallel AJAX chains are done */
                 var time_elapsed = (new Date).getTime() - time_start;
                 log("Done! Loaded " + processed_count + " tweeps using " + (total_api_requests - hits_start) + " API calls in " + time_elapsed/1000 + " seconds.");
-                show_thanks(tset_mutual, tset_only_following, tset_only_followers);
             }
 
             log("Fetching tweeps: 0%");
