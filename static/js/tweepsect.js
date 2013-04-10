@@ -355,7 +355,7 @@ function set_thanks_text(s) {
 }
 
 function show_thanks(tset_mutual, tset_only_following, tset_only_followers) {
-    set_thanks_text("Found my Twitter stalkers using Tweepsect (" + tset_mutual.count + " stalkers and " + tset_only_followers.count +" mutual friends), try it! http://tweepsect.com/");
+    set_thanks_text("Found my Twitter stalkers using Tweepsect (" + tset_only_followers.count + " stalkers and " + tset_mutual.count +" mutual friends), try it! http://tweepsect.com/");
 }
 
 function parse_username(input) {
