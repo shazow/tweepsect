@@ -344,11 +344,6 @@ function decorate_tweep(item) {
     );
 }
 
-THANKS_PHRASES = [
-    "Found my Twitter stalkers using Tweepsect, try it! http://tweepsect.com/",
-    "I &hearts; Tweepsect, try it! http://tweepsect.com/"
-];
-
 function set_thanks_text(s) {
     var href = 'https://twitter.com/home?status=' + encodeURI(s);
     $("#thanks-link").attr('href', href);
@@ -359,7 +354,7 @@ function show_thanks(num_mutual, num_stalking, num_stalkers) {
     if (Math.random() < 0.5) {
         set_thanks_text("Found my Twitter stalkers using Tweepsect (" + num_stalkers + " stalkers and " + num_mutual +" mutual friends), try it! http://tweepsect.com/");
     } else {
-        set_thanks_text("Found my " + num_stalkers + " stalkers on Twitter (and " + num_mutual + " mutual friends) by using Tweepsect, try it! http://tweepsect.com/");
+        set_thanks_text("Found my " + num_stalkers + " stalkers on Twitter (and " + num_mutual + " mutual friends) by using Tweepsect, try it out! http://tweepsect.com/");
     }
 }
 
