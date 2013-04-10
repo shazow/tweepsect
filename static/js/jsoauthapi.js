@@ -14,8 +14,9 @@ function parse_hash(hash) {
     });
 
     if(suffers_from_ie) {}
-    else
+    else {
         window.location.hash = remainder_hash; /// FIXME: IE doesn't like this line
+    }
 
     return params;
 }
