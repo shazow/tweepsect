@@ -199,3 +199,9 @@ body > #wrap {
 #warning strong {
     color: red;
 }
+#ads {
+    width: 300px;
+    padding-top: 2em;
+    overflow: hidden;
+    margin: 2em auto;
+}
