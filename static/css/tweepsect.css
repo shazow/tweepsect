@@ -81,7 +81,6 @@ body > #wrap {
     list-style-type: none;
 }
 #results a {
-    color: #0084B4;
     position: relative;
 }
 #results .unfollowed a {
@@ -199,9 +198,32 @@ body > #wrap {
 #warning strong {
     color: red;
 }
-#ads {
-    width: 300px;
-    padding-top: 2em;
+.ad {
     overflow: hidden;
+    width: 400px;
+    margin: 0 auto;
+    color: #555;
+    font-size: 14px;
+}
+.ad hr {
+    width: 200px;
+    height: 1px;
     margin: 2em auto;
+}
+.ad a, #results .ad a {
+    color: #555;
+}
+
+.ad img {
+    float: left;
+    padding-right: 1em;
+}
+.ad a.ad-placeholder {
+    color: #aaa;
+    display: block;
+    line-height: 3em;
+    font-size: 0.8em;
+}
+.ad #fusion_ad {
+    overflow: hidden;
 }

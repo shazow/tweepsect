@@ -48,7 +48,7 @@
 <!--[if IE]>
   <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection" />
 <![endif]-->
-<link rel="stylesheet" href="/static/css/tweepsect.css?30" type="text/css" />
+<link rel="stylesheet" href="/static/css/tweepsect.css?31" type="text/css" />
 </head>
 <body>
 
@@ -94,10 +94,14 @@
             <img src="/static/images/intersection.png" alt="Tweepsect venn diagram to show stalkers, stalking, followers, and following"/>
         </div>
 
-        <div id="ads">
-            <!-- BuySellAds Zone Code -->
-            <div id="bsap_1289056" class="bsarocks bsap_bbef6a6ff85ab6853aeeed6c996aafc6"></div>
-            <!-- End BuySellAds Zone Code -->
+        <div class="ad">
+            <hr />
+
+            <div id="fusion_ad">
+                <a href="http://fusionads.net" class="ad-placeholder">Powered by Fusion</a>
+            </div>
+
+            <hr />
         </div>
     </div>
     <div class="span-8" id="mutual"></div>
@@ -133,17 +137,13 @@ var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "htt
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 </script>
 
-<!-- BuySellAds Ad Code -->
 <script type="text/javascript">
 (function(){
-  var bsa = document.createElement('script');
-     bsa.type = 'text/javascript';
-     bsa.async = true;
-     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
-  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
-})();
-</script>
-<!-- End BuySellAds Ad Code -->
+  var fusion = document.createElement('script');
+  fusion.src = window.location.protocol + '//adn.fusionads.net/api/1.0/ad.js?zoneid=277&rand=' + Math.floor(Math.random()*9999999);
+  fusion.async = true;
+  (document.head || document.getElementsByTagName('head')[0]).appendChild(fusion);
+})();</script>
 
 </body>
 </html>
