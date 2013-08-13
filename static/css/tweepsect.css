@@ -107,6 +107,7 @@ body > #wrap {
 }
 #intro {
     font-size: 1.3em;
+    overflow: hidden;
 }
 
 #intro dt {
