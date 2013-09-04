@@ -131,10 +131,18 @@ function get_followx(type, screen_name, callback) {
     var users_hash = {};
     var users_array = [];
 
-    query_twitter("/" + type + "/ids.json", {screen_name: screen_name}, function(data) {
-        $.each(data.ids, function(i, id) { users_hash[id] = true; users_array.push(id); });
-        callback(users_hash, users_array.sort(compare_numerically));
-    });
+    function with_paging(cursor) {
+        query_twitter("/" + type + "/ids.json", {screen_name: screen_name, cursor: cursor}, function(data) {
+            $.each(data.ids, function(i, id) { users_hash[id] = true; users_array.push(id); });
+
+            if(data.next_cursor && data.next_cursor > 0) {
+                with_paging(data.next_cursor);
+            } else {
+                callback(users_hash, users_array.sort(compare_numerically));
+            }
+        });
+    }
+    with_paging(-1);
 }
 
 function get_following(screen_name, callback) { get_followx("friends", screen_name, callback); }
