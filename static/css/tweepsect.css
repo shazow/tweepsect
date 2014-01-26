@@ -57,12 +57,26 @@ a {
     text-decoration: none;
 }
 #footer {
-    height: 4em;
-    line-height: 4em;
-    text-align: center;
-    position: relative;
-    margin-top: -4em;
-    clear:both;
+    text-align: left;
+    width: 32em;
+    margin: 0 auto;
+    line-height: 1.5em;
+    padding: 0.7em 1em;
+    background: #ecf6fa;
+    overflow: hidden;
+
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+#footer p, #footer ul {
+    margin-bottom: 0.6em;
+}
+#footer li {
+    list-style: none;
 }
 body > #wrap {
     min-height: 100%;
