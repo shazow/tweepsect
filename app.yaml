@@ -1,6 +1,6 @@
 application: tweepsect
 version: 4
-runtime: python27
+runtime: python
 threadsafe: yes
 api_version: 1
 
