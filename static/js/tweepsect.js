@@ -352,7 +352,7 @@ function decorate_tweep(item) {
     );
 }
 
-function set_thanks_text(s) {
+function set_thanks_text(s, variation_label) {
     var href = 'https://twitter.com/home?status=' + encodeURI(s);
     $("#thanks-link").attr('href', href);
 }
@@ -360,9 +360,9 @@ function set_thanks_text(s) {
 function show_thanks(num_mutual, num_stalking, num_stalkers) {
     // "A-B test" the message, for funsies.
     if (Math.random() < 0.5) {
-        set_thanks_text("Found my Twitter stalkers using Tweepsect (" + num_stalkers + " stalkers and " + num_mutual +" mutual friends), try it! http://tweepsect.com/");
+        set_thanks_text("Found my Twitter stalkers using Tweepsect (" + num_stalkers + " stalkers and " + num_mutual +" mutual friends), try it! http://tweepsect.com/", 1);
     } else {
-        set_thanks_text("Found my " + num_stalkers + " stalkers on Twitter (and " + num_mutual + " mutual friends) by using Tweepsect, try it out! http://tweepsect.com/");
+        set_thanks_text("Found my " + num_stalkers + " stalkers on Twitter (and " + num_mutual + " mutual friends) by using Tweepsect, try it out! http://tweepsect.com/", 2);
     }
 }
 
@@ -383,7 +383,7 @@ function parse_username(input) {
 
 function get_results() {
     $("#intro").hide();
-    try { _gat._getTracker("UA-407051-5")._trackPageview("/query"); } catch(err) {}
+    ga('send', 'pageview', '/query');
 
     var input = $("#username").prop("value");
     if(!input) {
