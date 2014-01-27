@@ -526,3 +526,30 @@ function relative_time(time_value) {
     return (parseInt(delta / 86400)).toString() + ' days ago';
     }
 }
+
+function track_links(selector, category) {
+    $('a', selector).on('click', function(e) {
+        var url = $(this).attr("href");
+        if (e.currentTarget.host != window.location.host) {
+            var is_new_tab = e.metaKey || e.ctrlKey || this.target == "_blank";
+            var ga_event = {
+                'hitType': 'event',
+                'eventCategory': category,
+                'eventAction': 'click',
+                'eventLabel': url
+            };
+            if (is_new_tab) {
+                ga('send', ga_event);
+                return true;
+            }
+
+            ga_event['hitCallback'] = function() {
+                document.location = url;
+            };
+            ga('send', ga_event);
+
+            e.preventDefault();
+            return false;
+        }
+    });
+};
