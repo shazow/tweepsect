@@ -11,51 +11,26 @@
 
 <title>tweepsect | stalkers exposed</title>
 
-<script src="http://www.google.com/jsapi"></script>
-<script type="text/javascript" src="/static/js/sha1.js"></script>
-<script type="text/javascript" src="/static/js/oauth.js"></script>
-<script type="text/javascript" src="/static/js/jsoauthapi.js?29"></script>
-<script type="text/javascript" src="/static/js/tweepsect.js?35"></script>
-<script type="text/javascript">
-    google.load("jquery", "1");
-    var suffers_from_ie = navigator.appVersion.indexOf('MSIE') != -1;
-
-    /* We don't want to start messing around with things until jQuery etc is loaded. */
-    google.setOnLoadCallback(function() {
-        OAuth.app = "tweepsect";
-
-        var data = parse_hash(window.location.hash);
-        if(!data) {
-            data = check_cookies();
-        }
-        if(data) load_accessor(data);
-
-        if(window.location.port == "8080") OAuth.app = "tweepsect-test";
-
-        if(OAuth.accessor == undefined) {
-            $("#login").click(function() { OAuth.auth_redirect(); }).show();
-            ga('send', 'pageview');
-        } else {
-            $("#tweepsect_input").show();
-            $("#logout").click(function() { clear_cookies(); window.location.href = '/'; }).show();
-            log("Welcome! You're authenticated and ready to go, pick a Twitter user to inspect.");
-            ga('send', 'pageview', '/authed');
-        }
-
-        $("#thanks-link").click(function() {
-            ga('send', 'event', 'thanks', 'tweet-open');
-        });
-
-        track_links($("#footer"), 'footer');
-    });
-</script>
-<script type="text/javascript" src="/static/js/jquery.jsonp-2.4.0.min.js"></script>
 <link rel="stylesheet" href="/static/css/blueprint/screen.css" type="text/css" media="screen, projection" />
 <link rel="stylesheet" href="/static/css/blueprint/print.css" type="text/css" media="print" />
 <!--[if IE]>
   <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection" />
 <![endif]-->
-<link rel="stylesheet" href="/static/css/tweepsect.css?34" type="text/css" />
+<link rel="stylesheet" href="/static/css/tweepsect.css?35" type="text/css" />
+
+<script src="//www.google.com/jsapi"></script>
+<script type="text/javascript" src="/static/js/sha1.js"></script>
+<script type="text/javascript" src="/static/js/oauth.js"></script>
+<script type="text/javascript" src="/static/js/jsoauthapi.js?29"></script>
+<script type="text/javascript" src="/static/js/tweepsect.js?36"></script>
+<script type="text/javascript">
+    google.load("jquery", "1");
+    var suffers_from_ie = navigator.appVersion.indexOf('MSIE') != -1;
+</script>
+<script type="text/javascript" src="/static/js/jquery.jsonp-2.4.0.min.js"></script>
+
+<script src="//www.google-analytics.com/cx/api.js?experiment=8HbtOK_gQBKYVhuObd7IXg"></script>
+
 </head>
 <body>
 
@@ -78,7 +53,7 @@
     </div>
     <div id="say_thanks" class="span-9 last">
         <div>
-            <a href="https://twitter.com/home?status=I%20found%20my%20stalkers%20on%20Tweepsect%2C%20try%20it%20out%21%20http%3A//tweepsect.com/" id="thanks-link" target="_blank">Say thanks with a tweet. <span class="red">&hearts;</span></a>
+            <a href="https://twitter.com/home?status=I%20found%20my%20stalkers%20on%20Tweepsect%2C%20try%20it%20out%21%20http%3A//tweepsect.com/" class="thanks-link" target="_blank">Say thanks with a tweet. <span class="red">&hearts;</span></a>
         </div>
     </div>
     <div id="progress" class="span-24 last">[\] Find out who Twitter users are stalking (and who is stalking them). <a href="http://jsoauth.appspot.com/api?function=auth&amp;app=tweepsect">Sign in with Twitter to begin!</a></div>
@@ -118,7 +93,7 @@
 
 </div>
 
-<div id="footer">
+<footer id="footer">
     <p>
         Tweepsect is a <a href="http://shazow.net/">shazow</a> project. Try some of my other projects...
     </p>
@@ -133,7 +108,35 @@
             <a href="http://wedomainsearch.com">WeDomainSearch</a> &middot; Find available domains with friends.
         </li>
     </ul>
-</div>
+</footer>
+
+<footer id="footer-2" style="display: none;">
+    <div class="footer-button">
+        <p>
+            &ldquo;Thank you for using Tweepsect.&rdquo; &mdash; <a href="http://shazow.net">@shazow</a>
+        </p>
+    </div>
+
+    <div class="footer-expand">
+        <p style="text-align: center;">
+            Hi there. I welcome you to try some of my other projects:
+        </p>
+        <ul>
+            <li>
+                <a href="http://briefmetrics.com">Briefmetrics</a> &middot; Weekly email summaries for your Google Analytics.
+            </li>
+            <li>
+                <a href="http://colorblendy.com">Colorblendy</a> &middot; Blend colors in your browser without opening Photoshop.
+            </li>
+            <li>
+                <a href="http://wedomainsearch.com">WeDomainSearch</a> &middot; Find available domains with friends.
+            </li>
+        </ul>
+        <p style="text-align: center;">
+            Or <a href="https://twitter.com/home?status=I%20found%20my%20stalkers%20on%20Tweepsect%2C%20try%20it%20out%21%20http%3A//tweepsect.com/" class="thanks-link" target="_blank">say thanks with a tweet.</a> <span class="red">&hearts;</span>
+        </p>
+    </div>
+</footer>
 <!-- Design cleanup courtesy of Tracy Osborn (@limedaring) - http://limedaring.com/ -->
 
 <div id="templates">
@@ -151,7 +154,6 @@
             <div class="button"><i class="twitter_sprite unfollow" title="Unfollow"></i></div>
         </div>
     </div>
-
 </div>
 
 <script>
@@ -170,6 +172,52 @@ ga('create', 'UA-407051-5', 'auto');
   fusion.async = true;
   (document.head || document.getElementsByTagName('head')[0]).appendChild(fusion);
 })();</script>
+
+<script>
+    var experiment_var = cxApi.chooseVariation();
+
+    google.setOnLoadCallback(function() {
+        OAuth.app = "tweepsect";
+
+        var data = parse_hash(window.location.hash);
+        if(!data) {
+            data = check_cookies();
+        }
+        if(data) load_accessor(data);
+
+        if(window.location.port == "8080") OAuth.app = "tweepsect-test";
+
+        if(OAuth.accessor == undefined) {
+            $("#login").click(function() { OAuth.auth_redirect(); }).show();
+            ga('send', 'pageview');
+        } else {
+            $("#tweepsect_input").show();
+            $("#logout").click(function() { clear_cookies(); window.location.href = '/'; }).show();
+            log("Welcome! You're authenticated and ready to go, pick a Twitter user to inspect.");
+            ga('send', 'pageview', '/authed');
+        }
+
+        $(".thanks-link").click(function() {
+            ga('send', 'event', 'thanks', 'tweet-open');
+        });
+
+        track_links($("footer"), 'footer');
+
+        $("#footer-2").hover(function() {
+            $(".footer-expand", this).show(function() {
+                $('html, body').animate({
+                    scrollTop: $(document).height()
+                }, 300);
+                ga('send', 'event', 'footer', 'expand');
+            });
+            $(this).unbind('hover');
+        });
+
+        if (experiment_var > 0) {
+            $("#footer").hide(); $("#footer-2").show();
+        }
+    });
+</script>
 
 </body>
 </html>

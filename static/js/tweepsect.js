@@ -354,7 +354,7 @@ function decorate_tweep(item) {
 
 function set_thanks_text(s, variation_label) {
     var href = 'https://twitter.com/home?status=' + encodeURI(s);
-    $("#thanks-link").attr('href', href);
+    $(".thanks-link").attr('href', href);
 }
 
 function show_thanks(num_mutual, num_stalking, num_stalkers) {
@@ -536,7 +536,7 @@ function track_links(selector, category) {
                 'hitType': 'event',
                 'eventCategory': category,
                 'eventAction': 'click',
-                'eventLabel': url
+                'eventLabel': url.split("?")[0] // Don't track query args.
             };
             if (is_new_tab) {
                 ga('send', ga_event);

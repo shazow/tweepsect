@@ -56,7 +56,8 @@ a {
 #header a {
     text-decoration: none;
 }
-#footer {
+
+footer {
     text-align: left;
     width: 36em;
     margin: 0 auto;
@@ -73,10 +74,10 @@ a {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
-#footer p, #footer ul {
+footer p, footer ul {
     margin-bottom: 0.6em;
 }
-#footer li {
+footer li {
     list-style: none;
 }
 body > #wrap {
@@ -242,4 +243,19 @@ body > #wrap {
 }
 .ad #fusion_ad {
     overflow: hidden;
+}
+
+#footer-2 p {
+    text-align: center;
+}
+#footer-2 .footer-button {
+    cursor: pointer;
+}
+
+#footer-2 .footer-expand {
+    display: none;
+}
+
+#footer-2:hover {
+    background: #FFFFCC;
 }
