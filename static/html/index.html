@@ -93,7 +93,12 @@
 
 </div>
 
-<footer id="footer">
+<footer id="footer" style="text-align: center;">
+        Tweepsect is built by <a href="http://shazow.net/" style="color: #111;">shazow</a>, for free!
+        <a href="https://twitter.com/home?status=I%20found%20my%20stalkers%20on%20Tweepsect%2C%20try%20it%20out%21%20http%3A//tweepsect.com/" class="thanks-link" target="_blank">You can say thanks with a tweet.</a>
+</footer>
+
+<footer id="footer-2" style="display: none;">
     <p>
         Tweepsect is a <a href="http://shazow.net/">shazow</a> project. Try some of my other projects...
     </p>
@@ -110,33 +115,6 @@
     </ul>
 </footer>
 
-<footer id="footer-2" style="display: none;">
-    <div class="footer-button">
-        <p>
-            &ldquo;Thank you for using Tweepsect.&rdquo; &mdash; <a href="http://shazow.net">@shazow</a>
-        </p>
-    </div>
-
-    <div class="footer-expand">
-        <p style="text-align: center;">
-            Hi there. I welcome you to try some of my other projects:
-        </p>
-        <ul>
-            <li>
-                <a href="http://briefmetrics.com">Briefmetrics</a> &middot; Weekly email summaries for your Google Analytics.
-            </li>
-            <li>
-                <a href="http://colorblendy.com">Colorblendy</a> &middot; Blend colors in your browser without opening Photoshop.
-            </li>
-            <li>
-                <a href="http://wedomainsearch.com">WeDomainSearch</a> &middot; Find available domains with friends.
-            </li>
-        </ul>
-        <p style="text-align: center;">
-            Or <a href="https://twitter.com/home?status=I%20found%20my%20stalkers%20on%20Tweepsect%2C%20try%20it%20out%21%20http%3A//tweepsect.com/" class="thanks-link" target="_blank">say thanks with a tweet.</a> <span class="red">&hearts;</span>
-        </p>
-    </div>
-</footer>
 <!-- Design cleanup courtesy of Tracy Osborn (@limedaring) - http://limedaring.com/ -->
 
 <div id="templates">
@@ -202,16 +180,6 @@ ga('create', 'UA-407051-5', 'auto');
         });
 
         track_links($("footer"), 'footer');
-
-        $("#footer-2").hover(function() {
-            $(".footer-expand", this).show(function() {
-                $('html, body').animate({
-                    scrollTop: $(document).height()
-                }, 300);
-                ga('send', 'event', 'footer', 'expand');
-            });
-            $(this).unbind('hover');
-        });
 
         if (experiment_var > 0) {
             $("#footer").hide(); $("#footer-2").show();

@@ -244,18 +244,3 @@ body > #wrap {
 .ad #fusion_ad {
     overflow: hidden;
 }
-
-#footer-2 p {
-    text-align: center;
-}
-#footer-2 .footer-button {
-    cursor: pointer;
-}
-
-#footer-2 .footer-expand {
-    display: none;
-}
-
-#footer-2:hover {
-    background: #FFFFCC;
-}
