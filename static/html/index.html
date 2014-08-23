@@ -141,25 +141,14 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
 ga('create', 'UA-407051-5', 'auto');
+ga('require', 'displayfeatures');
 </script>
 
 <script type="text/javascript">
-// Hacky ad-swapping code for a trial test.
-var swap_ad_since = 1401917000000; // June 4, 2014 at ~2:08pm pst
-var swap_ad_until = swap_ad_since + (1000 * 60 * 60 * 24); // 24 hours.
-var now = +new Date();
-var is_swap_ad = now < swap_ad_until && now >= swap_ad_since;
-
-if (!is_swap_ad) {
-(function(){
-    var fusion = document.createElement('script');
-    fusion.src = window.location.protocol + '//adn.fusionads.net/api/1.0/ad.js?zoneid=277&rand=' + Math.floor(Math.random()*9999999);
-    fusion.async = true;
-    (document.head || document.getElementsByTagName('head')[0]).appendChild(fusion);
-})();
-} else {
-    document.getElementById('fusion_ad').innerHTML = '<a href="http://bit.ly/1knIAtx" rel="nofollow"><img src="https://d1nq99tbk0qfjm.cloudfront.net/static/app/images/ads/ts.ad.png" /></a>';
-}
+var fusion = document.createElement('script');
+fusion.src = window.location.protocol + '//adn.fusionads.net/api/1.0/ad.js?zoneid=277&rand=' + Math.floor(Math.random()*9999999);
+fusion.async = true;
+(document.head || document.getElementsByTagName('head')[0]).appendChild(fusion);
 </script>
 
 <script>
