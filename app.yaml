@@ -1,5 +1,5 @@
 application: tweepsect
-version: 4
+version: 5
 runtime: python
 threadsafe: yes
 api_version: 1
