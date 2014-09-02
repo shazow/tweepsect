@@ -76,9 +76,18 @@ TweepSet.prototype.add_member = function(tweep, fade) {
     var row = $("<li></li>").html('<a href="http://twitter.com/'+ tweep.screen_name +'" target="_blank">'+ tweep.screen_name +'</a>');
 
     var last_tweet = tweep['status'] && Date.parse(tweep['status']['created_at']);
-
     if(last_tweet && now - last_tweet > 3*30*24*60*60*1000) { // 3 months
         $("a", row).append(' <i class="twitter_sprite stale" title="Inactive for more than 3 months."></i>');
+    }
+
+    var created_at = new Date(tweep['created_at']);
+    var age_days = Math.round((new Date() - created_at) / (1000.0 * 60 * 60 * 24));
+    var tweet_rate = Number(tweep['statuses_count'] / age_days).toFixed(1);
+    tweep['created_year'] = created_at.getFullYear();
+    tweep['tweet_rate'] = tweet_rate;
+
+    if (tweet_rate > 10) {
+        $("a", row).append(' <i class="twitter_sprite loud" title="'+ tweet_rate +' tweets per day."></i>');
     }
 
     row[0].info = tweep;
@@ -320,7 +329,6 @@ function render_template(template_name, context) {
 }
 
 function decorate_tweep(item) {
-    foo = item;
     $(item).hover(
         function() {
             var info  = this.info;

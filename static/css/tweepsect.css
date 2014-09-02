@@ -172,10 +172,10 @@ body > #wrap {
 }
 .floating_actions {
     height: 15px;
-    width: 30px;
+    width: 32px;
     position: absolute;
-    margin-top: -1.4em;
-    margin-left: -35px;;
+    margin-top: -1.25em;
+    margin-left: -38px;;
 }
 .floating_actions i {
     float: left;
@@ -186,23 +186,24 @@ body > #wrap {
     padding-left: 100px;
 }
 .twitter_sprite {
-    background-image: url('/static/images/twitter-sprite-icons.png?28');
+    background-image: url('/static/images/sprites.png?1');
     background-repeat: no-repeat;
-    height: 13px;
-    width: 13px;
+    font-size: 14px;
+    height: 1em;
+    width: 1em;
     overflow: hidden;
-    display: block;
+    display: inline-block;
+    vertical-align: middle;
     margin: 1px;
     cursor: pointer;
 }
 .button {}
-.twitter_sprite.follow { background-position:-176px -32px; }
-.twitter_sprite.follow:hover { background-position:-160px -32px; }
-.twitter_sprite.unfollow { background-position:-112px -32px; }
-.twitter_sprite.unfollow:hover { background-position:-96px -32px; }
-.twitter_sprite.block { background-position:-144px -32px; }
-.twitter_sprite.block:hover { background-position:-128px -32px; }
-.twitter_sprite.stale { background-position: -208px 0px; position: absolute; top: 1px; right: -15px;}
+.twitter_sprite.follow { background-position:-0em -0em; }
+.twitter_sprite.follow:hover { background-position:-1em -0em; }
+.twitter_sprite.unfollow { background-position:-2em -0em; }
+.twitter_sprite.unfollow:hover { background-position:-3em -0em; }
+.twitter_sprite.stale { background-position: -4em 0em; }
+.twitter_sprite.loud { background-position: -5em 0em; }
 
 #warning {
     color: #733;

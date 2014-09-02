@@ -16,13 +16,13 @@
 <!--[if IE]>
   <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection" />
 <![endif]-->
-<link rel="stylesheet" href="/static/css/tweepsect.css?35" type="text/css" />
+<link rel="stylesheet" href="/static/css/tweepsect.css?37" type="text/css" />
 
 <script src="//www.google.com/jsapi"></script>
 <script type="text/javascript" src="/static/js/sha1.js"></script>
 <script type="text/javascript" src="/static/js/oauth.js"></script>
 <script type="text/javascript" src="/static/js/jsoauthapi.js?29"></script>
-<script type="text/javascript" src="/static/js/tweepsect.js?36"></script>
+<script type="text/javascript" src="/static/js/tweepsect.js?37"></script>
 <script type="text/javascript">
     google.load("jquery", "1");
     var suffers_from_ie = navigator.appVersion.indexOf('MSIE') != -1;
@@ -106,13 +106,14 @@
         <div class="floating_info">
             <div class="floating_info_body">
                 <p><img src="{{ profile_image_url }}" /> <span class="name">{{ name }}</span></p>
-                <p>{{ friends_count }} following, {{ followers_count }} followers</p>
+                <p>{{ friends_count }} following, {{ followers_count }} followers.</p>
                 <p>Last tweet {{ last_tweet }}.</p>
+                <p>{{ statuses_count }} tweets since {{ created_year }}.</p>
             </div>
         </div>
         <div class="floating_actions">
-            <div class="button"><i class="twitter_sprite follow" title="Follow"></i></div>
-            <div class="button"><i class="twitter_sprite unfollow" title="Unfollow"></i></div>
+            <i class="twitter_sprite follow" title="Follow"></i>
+            <i class="twitter_sprite unfollow" title="Unfollow"></i>
         </div>
     </div>
 </div>
