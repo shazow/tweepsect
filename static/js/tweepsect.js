@@ -383,7 +383,7 @@ function parse_username(input) {
         var parts = input.split("/", 2);
         return {
             username: parts[0],
-            listname: parts[1].split("/", 2)[0]
+            listname: parts[1].split("/")[1]
         }
     }
     return {username: input};
