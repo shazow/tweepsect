@@ -204,6 +204,7 @@ body > #wrap {
 .twitter_sprite.unfollow:hover { background-position:-3em -0em; }
 .twitter_sprite.stale { background-position: -4em 0em; }
 .twitter_sprite.loud { background-position: -5em 0em; }
+.twitter_sprite.xoxo { background-position: -6em 0em; }
 
 #warning {
     color: #733;
