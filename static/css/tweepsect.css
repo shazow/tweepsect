@@ -186,7 +186,7 @@ body > #wrap {
     padding-left: 100px;
 }
 .twitter_sprite {
-    background-image: url('/static/images/sprites.png?1');
+    background-image: url('/static/images/sprites.png?3');
     background-repeat: no-repeat;
     font-size: 14px;
     height: 1em;
@@ -205,6 +205,7 @@ body > #wrap {
 .twitter_sprite.stale { background-position: -4em 0em; }
 .twitter_sprite.loud { background-position: -5em 0em; }
 .twitter_sprite.xoxo { background-position: -6em 0em; }
+.twitter_sprite.bb { background-position: -7em 0em; }
 
 #warning {
     color: #733;
