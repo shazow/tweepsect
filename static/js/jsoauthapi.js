@@ -63,7 +63,7 @@ function load_accessor(data) {
 google.setOnLoadCallback(function() {
 
     OAuth.auth_redirect = function() {
-        window.location.replace("http://jsoauth.appspot.com/api?function=auth&app=" + OAuth.app);
+        window.location.replace("http://jsoauth2.appspot.com/api?function=auth&app=" + OAuth.app);
     }
 
     OAuth.get_signed_url = function(url, parameters, method) {
