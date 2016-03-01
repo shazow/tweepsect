@@ -142,7 +142,7 @@ function check_limit(success_callback) {
     });
 }
 
-function get_followx(type, screen_name, callback) {
+function get_followx(type, screen_name, callback, limit) {
     var users_hash = {};
     var users_array = [];
 
@@ -150,7 +150,8 @@ function get_followx(type, screen_name, callback) {
         query_twitter("/" + type + "/ids.json", {screen_name: screen_name, cursor: cursor}, function(data) {
             $.each(data.ids, function(i, id) { users_hash[id] = true; users_array.push(id); });
 
-            if(data.next_cursor && data.next_cursor > 0) {
+            var maxed = limit !== undefined && limit < users_array.length;
+            if(data.next_cursor && data.next_cursor > 0 && !maxed) {
                 with_paging(data.next_cursor);
             } else {
                 callback(users_hash, users_array.sort(compare_numerically));
@@ -163,26 +164,34 @@ function get_followx(type, screen_name, callback) {
 function get_following(screen_name, callback) { get_followx("friends", screen_name, callback); }
 function get_followers(screen_name, callback) { get_followx("followers", screen_name, callback); }
 
-function get_social_ids(screen_name, callback) {
+function get_social_ids(screen_name, callback, config) {
     log("Loading social network counts.");
     var only_followers = new Array();
     var only_following = new Array();
     var mutual = new Array();
 
-    get_following(screen_name, function(following_hash, following) {
-        get_followers(screen_name, function(followers_hash, followers) {
-            /// TODO: This could be done better...
-            load_diffs(following, followers, only_followers, only_following, mutual);
+    var skip_followers = config !== undefined && config.skip_followers;
 
-            callback({
-                only_followers: only_followers,
-                only_following: only_following,
-                mutual: mutual,
-                following: following,
-                following_hash: following_hash,
-                followers: followers,
-                followers_hash: followers_hash
-            });
+    var cb = function(following_hash, followers_hash, following, followers) {
+        load_diffs(following, followers, only_followers, only_following, mutual);
+
+        callback({
+            only_followers: only_followers,
+            only_following: only_following,
+            mutual: mutual,
+            following: following,
+            following_hash: following_hash,
+            followers: followers,
+            followers_hash: followers_hash
+        });
+    };
+
+    get_following(screen_name, function(following_hash, following) {
+        if (skip_followers) {
+            return cb(following_hash, {}, following, []);
+        }
+        get_followers(screen_name, function(followers_hash, followers) {
+            return cb(following_hash, followers_hash, following, followers);
         });
     });
 }
@@ -487,7 +496,7 @@ function get_results() {
             } else {
                 load_list_members(username, listname, render_item, iter_callback, completed);
             }
-        });
+        }, config);
     });
 }
 
