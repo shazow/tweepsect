@@ -222,7 +222,14 @@ function load_twitter(api_target, cursor, item_callback, iter_callback, success_
         }
         $.each(data.users, function(i, item) { item_callback(item); });
 
-        if($.isFunction(iter_callback)) iter_callback(data.users.length);
+        if($.isFunction(iter_callback)) {
+            var r = iter_callback(data.users.length);
+            if (r === false) {
+                // Early abort
+                if($.isFunction(success_callback)) success_callback();
+                return;
+            }
+        }
 
         if(data.next_cursor && data.next_cursor > 0 && (get_min_limit() > 35 || confirm_api())) {
             load_twitter(api_target, data.next_cursor, item_callback, iter_callback, success_callback);
@@ -415,6 +422,15 @@ function get_results() {
     var time_start = (new Date).getTime();
     var MAX_FADE = 1000; // When there's too much on the screen, it gets laggy
 
+    var config = {};
+    if (window.location.search) {
+        var parts = window.location.search.substr(1).split("&");
+        for (var i=0; i<parts.length; i++) {
+            var kv = parts[i].split("=");
+            config[kv[0]] = kv[1];
+        }
+    }
+
     check_limit(function() {
         var hits_start = total_api_requests;
 
@@ -445,6 +461,13 @@ function get_results() {
 
                 processed_count += num;
                 log("Fetching tweeps: " + Math.round((processed_count / expected_total) * 100) + "%");
+
+                if (config.limit && Number(config.limit) < processed_count) {
+                    log("Limit reached, stopping early.");
+                    return false
+                }
+
+                return true
             }
 
             function completed() {
