@@ -186,7 +186,7 @@ body > #wrap {
     padding-left: 100px;
 }
 .twitter_sprite {
-    background-image: url('/static/images/sprites.png?3');
+    background-image: url('/images/sprites.png?3');
     background-repeat: no-repeat;
     font-size: 14px;
     height: 1em;
