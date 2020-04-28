@@ -18,18 +18,12 @@
 <![endif]-->
 <link rel="stylesheet" href="/css/tweepsect.css?40" type="text/css" />
 
-<script src="//www.google.com/jsapi"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="/js/sha1.js"></script>
 <script type="text/javascript" src="/js/oauth.js"></script>
-<script type="text/javascript" src="/js/jsoauthapi.js?30"></script>
+<script type="text/javascript" src="/js/jsoauthapi.js?31"></script>
 <script type="text/javascript" src="/js/tweepsect.js?44"></script>
-<script type="text/javascript">
-    google.load("jquery", "1");
-    var suffers_from_ie = navigator.appVersion.indexOf('MSIE') != -1;
-</script>
 <script type="text/javascript" src="/js/jquery.jsonp-2.4.0.min.js"></script>
-
-<script src="//www.google-analytics.com/cx/api.js?experiment=c7oJX5kRRbS5qM96rXSwtQ"></script>
 
 </head>
 <body>
@@ -80,7 +74,7 @@
             <hr />
 
             <div id="fusion_ad">
-                <a href="http://fusionads.net" class="ad-placeholder">Ads by Fusion</a>
+                <a href="https://fusionads.net" class="ad-placeholder">Ads by Fusion</a>
             </div>
 
             <hr />
@@ -136,7 +130,7 @@ fusion.async = true;
 </script>
 
 <script>
-    google.setOnLoadCallback(function() {
+    $.ready(function() {
         OAuth.app = "tweepsect";
 
         var data = parse_hash(window.location.hash);

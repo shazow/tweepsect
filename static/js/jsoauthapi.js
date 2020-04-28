@@ -60,7 +60,7 @@ function load_accessor(data) {
     save_cookies(data);
 }
 
-google.setOnLoadCallback(function() {
+$.ready(function() {
 
     OAuth.auth_redirect = function() {
         window.location.replace("http://jsoauth2.appspot.com/api?function=auth&app=" + OAuth.app);
