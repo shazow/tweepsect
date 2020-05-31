@@ -247,3 +247,23 @@ body > #wrap {
 .ad #fusion_ad {
     overflow: hidden;
 }
+
+#broken {
+    font-size: 1rem;
+    line-height: 1.3;
+
+    padding: 0.5em 1em;
+    margin: 1em auto 2em auto;
+    background: rgba(200, 40, 40, 0.1);
+    border: 2px solid rgba(200, 40, 40, 0.5);
+
+    max-width: 600px;
+}
+
+#broken p {
+    margin-bottom: 1em;
+}
+
+#broken a {
+    font-weight: bold;
+}
